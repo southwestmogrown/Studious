@@ -5,10 +5,18 @@ const { Note } = require('../../../db/models');
 
 // Get all notes
 router.get('/', async (req, res) => {
-    const notes = await Note.findAll();
+    const userId = req.user.id;
+    const notes = await Note.findAll({
+        where: {
+            userId
+        }
+    });
 
     if (notes) {
-        return res.json(notes);
+        const safeNotes = notes.map(note => {
+            return {data: note.data}
+        });
+        return res.json(safeNotes);
     } else {
         return null;
     }
@@ -21,28 +29,12 @@ router.get('/:id', async (req, res) => {
     const note = await Note.findByPk(id);
 
     if (note) {
-        return res.json(note);
+        const safeNote = {data: note.data}
+        return res.json(safeNote);
     } else {
         return null;
     }
 
-});
-
-// Get all notes from single user
-router.get('/user/:userId', async (req, res) => {
-    const userId = req.params.userId;
-
-    const notes = await Note.findAll({
-        where: {
-            userId: userId
-        }
-    });
-
-    if (notes) {
-        return res.json(notes);
-    } else {
-        return null;
-    }
 });
 
 // Create a new note
