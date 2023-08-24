@@ -4,7 +4,9 @@ const { Model, Validator } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
-      // define association here
+      User.hasMany(models.Note, { foreignKey: 'userId' })
+      User.hasMany(models.Task, { foreignKey: 'userId' })
+      User.hasMany(models.FlashCard, { foreignKey: 'userId' })
     }
   };
 
@@ -15,6 +17,28 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           len: [4, 30],
+          isNotEmail(value) {
+            if (Validator.isEmail(value)) {
+              throw new Error("Cannot be an email.");
+            }
+          }
+        }
+      },
+      firstName: {
+        type: DataTypes.STRING,
+        validate: {
+          len: [2, 30],
+          isNotEmail(value) {
+            if (Validator.isEmail(value)) {
+              throw new Error("Cannot be an email.");
+            }
+          }
+        }
+      },
+      lastName: {
+        type: DataTypes.STRING,
+        validate: {
+          len: [2, 30],
           isNotEmail(value) {
             if (Validator.isEmail(value)) {
               throw new Error("Cannot be an email.");
